@@ -8,16 +8,20 @@ launcher for BYD DiLink head units. The structure follows
 
 | Patch | Default | Description |
 |---|---|---|
+| Show subscription check result | on | Toast with the result of the app's own subscription check and how long the saved status works offline. Read-only. See [docs/entitlement-check.md](docs/entitlement-check.md) |
 | Disable in-app updates | on | Stops the app checking for, downloading and installing its own updates, which cannot install over a patched build |
 
 ## Docs
 
 - [APK analysis](docs/apk-analysis.md): identity, architecture (Dart vs dex), startup and
   device gate, MethodChannels, re-signing notes
+- [Subscription check](docs/entitlement-check.md): how the app checks, caches and expires it
+- [Network usage](docs/network-usage.md): every internet endpoint, by feature
 - [Patch candidates](docs/patch-candidates.md): what can be patched and where
 - [Build setup](docs/build-setup.md): GitHub Packages credentials for the Morphe plugin
 
-Entitlement, PRO, Trial and licensing checks are out of scope for this project.
+Patches never change, bypass or extend the app's subscription checks or limits. The one patch that
+touches that code only reports its result.
 
 ## Layout
 

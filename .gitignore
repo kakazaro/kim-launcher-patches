@@ -58,3 +58,4 @@ morphe-desktop-*.jar
 # Local analysis output and the reference APK
 .work/
 refer-apk/
+decompiled/

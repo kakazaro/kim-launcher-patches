@@ -21,3 +21,12 @@ pluginManagement {
 plugins {
     id("app.morphe.patches") version "2.0.0"
 }
+
+settings {
+    extensions {
+        defaultNamespace = "app.morphe.extension"
+
+        // Must resolve to an absolute path, otherwise extensions in subfolders cannot find it.
+        proguardFiles(rootProject.projectDir.resolve("extensions/proguard-rules.pro").toString())
+    }
+}

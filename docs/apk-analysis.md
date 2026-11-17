@@ -149,8 +149,9 @@ require an active Kim Pro trial or paid plan", "Studio editing requires PRO/Tria
 updates limited to Trial/PRO, QR pairing with the Kim PWA for a 7-day trial). Sentry, Studio
 editing, vehicle controls, Key Mapping, IC cast and OTA are gated on it.
 
-**This project does not patch, document hook points for, or otherwise work around the
-entitlement or licensing checks.** Use PRO features by buying them from the developer.
+**This project does not bypass, weaken or extend the entitlement or licensing checks.** Use PRO
+features by buying them from the developer. How the check works, and a read-only patch that only
+shows its result, are in [entitlement-check.md](entitlement-check.md).
 
 ## 8. Re-signing / tamper considerations
 
