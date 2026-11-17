@@ -24,6 +24,13 @@ private object EntitlementFetchFingerprint : Fingerprint(
     strings = listOf("/entitlement.json", "VehicleLocationSync entitlement plan="),
 )
 
+/**
+ * The answer every check stores instead of asking the server. Same shape the server sends
+ * (read by K1/sa.l: `plan`, `status`, `expiresAt`, `paidUntil`). Only the free plan: nothing in
+ * here can unlock a Trial/PRO feature.
+ */
+private const val FREE_PLAN_JSON = """{"plan":"free","status":"disabled","expiresAt":0,"paidUntil":0}"""
+
 @Suppress("unused")
 val alwaysFreePlanPatch = bytecodePatch(
     name = "Always free plan (skip subscription check)",
@@ -60,7 +67,7 @@ val alwaysFreePlanPatch = bytecodePatch(
             .map { ReferenceUtil.getFieldDescriptor(it) }
             .distinct()
 
-        // parse(vehicleId, json, nowMs): the server JSON -> record. json = null gives free/disabled.
+        // parse(vehicleId, json, nowMs): the server JSON -> record (plan, status, expiresAt/paidUntil).
         val parse = methods(Opcode.INVOKE_STATIC) {
             it.returnType == record &&
                 it.parameterTypes.map(CharSequence::toString) ==
@@ -85,14 +92,18 @@ val alwaysFreePlanPatch = bytecodePatch(
         }.singleOrNull() ?: fail("missing unique vehicle id field")
 
         // Same ending as the original success path (store, save, notify, return), minus the
-        // request: v0/v1 = now, v2 = vehicle id, v3 = null json. f0 has 11 locals, so these are free.
+        // request: v0/v1 = now, v2 = vehicle id, v3 = the fixed free-plan JSON object (v4 holds
+        // its text). f0 has 11 locals, so v0..v4 are free.
+        val freePlanJson = FREE_PLAN_JSON.replace("\"", "\\\"")
         fetch.addInstructions(
             0,
             """
                 invoke-static {}, Ljava/lang/System;->currentTimeMillis()J
                 move-result-wide v0
                 iget-object v2, p0, $vehicleId
-                const/4 v3, 0x0
+                new-instance v3, Lorg/json/JSONObject;
+                const-string v4, "$freePlanJson"
+                invoke-direct {v3, v4}, Lorg/json/JSONObject;-><init>(Ljava/lang/String;)V
                 invoke-static {v2, v3, v0, v1}, $parse
                 move-result-object v0
                 sput-object v0, $currentRecord
