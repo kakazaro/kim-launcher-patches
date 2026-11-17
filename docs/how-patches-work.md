@@ -53,7 +53,7 @@ several** methods match, the patch fails with an error. It never guesses.
 ## 4. Step B: edit it (addInstructions)
 
 ```kotlin
-OtaUpdateFingerprint.method.addInstructions(0, "const/4 p2, 0x0")
+OtaUpdateFingerprint.method.addInstructions(0, "const/16 p2, 0x0")
 ```
 
 `0` means "insert before the first instruction". Result in the new APK:
@@ -61,7 +61,7 @@ OtaUpdateFingerprint.method.addInstructions(0, "const/4 p2, 0x0")
 ```smali
 .method public static c(ILjava/lang/String;ZZ)Ljava/util/LinkedHashMap;
     .locals 29
-    const/4 p2, 0x0      <-- added: the "install" flag is now always false
+    const/16 p2, 0x0      <-- added: the "install" flag is now always false
     ...the original code runs as before...
 .end method
 ```

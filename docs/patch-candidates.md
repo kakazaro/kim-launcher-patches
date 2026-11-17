@@ -43,7 +43,7 @@ Dart (`K1/M5`), and `K1/d9` swallows it.
 - Fingerprint: `public static`, `(I, Ljava/lang/String;, Z, Z) -> Ljava/util/LinkedHashMap;`,
   strings `/otaAndroidLatest?vehicleId=`, `kim-launcher-update.apk`,
   `Downloaded APK checksum does not match.`. Unique in 1.0.2781.
-- Edit: at index 0, `const/4 p2, 0x0` (the `install` flag), so the check and its cached status
+- Edit: at index 0, `const/16 p2, 0x0` (the `install` flag), so the check and its cached status
   still work but nothing is downloaded or installed. `K1/uc.g()` still needs a Trial/paid plan.
 - Not covered: Dart also references `https://kim.storageclbsync.cc/android/PackageInstaller.apk`.
   That is a separate helper download that Morphe cannot reach.

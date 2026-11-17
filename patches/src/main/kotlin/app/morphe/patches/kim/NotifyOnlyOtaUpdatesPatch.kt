@@ -37,6 +37,6 @@ val notifyOnlyOtaUpdatesPatch = bytecodePatch(
     compatibleWith(compatibility)
 
     execute {
-        OtaUpdateFingerprint.method.addInstructions(0, "const/4 p2, 0x0")
+        OtaUpdateFingerprint.method.addInstructions(0, "const/16 p2, 0x0")
     }
 }
