@@ -17,7 +17,7 @@ sockets are used in app code.
 | Map eligibility | `…cloudfunctions.net/launcherMapboxEligibility` | `K1/sd` | Kim Map (Mapbox) may report it is unavailable |
 | Subscription status | `vehicles/<id>/entitlement.json` | `K1/sd` | PRO/Trial status cannot refresh; paid features lapse when the cached status or grace period runs out. This project does not change that. |
 | **Diagnostics to Telegram**: log and crash bundles, including an *automatic* trigger | `api.telegram.org/bot<token>/sendDocument` (hard-coded bot token and group chat ID, redacted here) | `K1/jc` | None for the user; stops logs leaving the car |
-| In-app updates | `…cloudfunctions.net/otaAndroidLatest` | `K1/uc` | Already blocked by **Disable in-app updates** |
+| In-app updates | `…cloudfunctions.net/otaAndroidLatest` | `K1/uc` | Check kept, download/install blocked by **Notify-only in-app updates** |
 | Package Installer helper link | `kim.storageclbsync.cc/android/PackageInstaller.apk` | `K1/r` (also in Dart) | Opens a browser link only |
 | Voice packs | `kim.storageclbsync.cc/voice-packs/catalog.json` plus pack downloads | `N1/I` | Installed packs keep working; no new downloads |
 | Weather widget | `api.weatherapi.com/v1/forecast.json` (hard-coded key) | `M1/h` | No weather |

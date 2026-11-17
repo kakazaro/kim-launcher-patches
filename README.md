@@ -8,7 +8,7 @@ launcher for BYD DiLink head units. The structure follows
 
 | Patch | Default | Description |
 |---|---|---|
-| Disable in-app updates | on | Stops the app checking for, downloading and installing its own updates, which cannot install over a patched build |
+| Notify-only in-app updates | on | Lets the app check for and show a newer upstream version but never downloads or installs it (it cannot install over a patched build). The check needs an active Trial or paid plan |
 | Always free plan (skip subscription check) | on | Every subscription check returns the free plan without contacting the server. Trial/PRO features stay locked. |
 
 ## Docs

@@ -7,7 +7,7 @@ Entitlement, PRO, Trial and licensing checks are out of scope
 | # | Patch | Default | Target (dex) | Status |
 |---|---|---|---|---|
 | 1 | **Allow non-BYD devices**: skip the "available only on BYD head units" screen (emulator or bench testing) | off | `r2.a.a(Context)Z` returns `true` | Hook located; ready to implement |
-| 2 | **Disable in-app updates**: the upstream OTA cannot install over a re-signed build | on | `K1/uc.c(I,String,Z,Z)LinkedHashMap` | **Implemented**: `DisableOtaUpdatesPatch.kt` |
+| 2 | **Notify-only in-app updates**: the upstream OTA cannot install over a re-signed build | on | `K1/uc.c(I,String,Z,Z)LinkedHashMap` | **Implemented**: `NotifyOnlyOtaUpdatesPatch.kt` |
 | 4 | **Always free plan**: `K1/sd.f0` skips the server and stores/returns `free/disabled` | on | `K1/sd.f0(pd,String,Z)md` | **Implemented**: `AlwaysFreePlanPatch.kt` (see below) |
 | 3 | **Telegram debug channel**: decide whether to disable it after reading what it sends | ? | `byd/telegram_debug` handler | Needs investigation |
 
@@ -22,7 +22,7 @@ Entitlement, PRO, Trial and licensing checks are out of scope
   services and receivers and by the accessibility service. Test that these do not crash-loop
   when the BYD framework classes are missing.
 
-## 2. Disable in-app updates (implemented)
+## 2. Notify-only in-app updates (implemented)
 
 Native call path (1.0.2781):
 
@@ -43,11 +43,11 @@ Dart (`K1/M5`), and `K1/d9` swallows it.
 - Fingerprint: `public static`, `(I, Ljava/lang/String;, Z, Z) -> Ljava/util/LinkedHashMap;`,
   strings `/otaAndroidLatest?vehicleId=`, `kim-launcher-update.apk`,
   `Downloaded APK checksum does not match.`. Unique in 1.0.2781.
-- Edit: at index 0, `throw new IllegalStateException("In-app updates are disabled in this
-  patched build.")` (`.locals 29`, so v0 and v1 are free). The edited class assembles to dex.
+- Edit: at index 0, `const/4 p2, 0x0` (the `install` flag), so the check and its cached status
+  still work but nothing is downloaded or installed. `K1/uc.g()` still needs a Trial/paid plan.
 - Not covered: Dart also references `https://kim.storageclbsync.cc/android/PackageInstaller.apk`.
   That is a separate helper download that Morphe cannot reach.
-- Not yet verified on a device: what the update screen shows for the error.
+- Not yet verified on a device: what the update screen shows when an update exists.
 
 ## 3. `byd/telegram_debug`
 

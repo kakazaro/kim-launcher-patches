@@ -53,12 +53,7 @@ several** methods match, the patch fails with an error. It never guesses.
 ## 4. Step B: edit it (addInstructions)
 
 ```kotlin
-OtaUpdateFingerprint.method.addInstructions(0, """
-    new-instance v0, Ljava/lang/IllegalStateException;
-    const-string v1, "In-app updates are disabled in this patched build."
-    invoke-direct {v0, v1}, Ljava/lang/IllegalStateException;-><init>(Ljava/lang/String;)V
-    throw v0
-""")
+OtaUpdateFingerprint.method.addInstructions(0, "const/4 p2, 0x0")
 ```
 
 `0` means "insert before the first instruction". Result in the new APK:
@@ -66,16 +61,13 @@ OtaUpdateFingerprint.method.addInstructions(0, """
 ```smali
 .method public static c(ILjava/lang/String;ZZ)Ljava/util/LinkedHashMap;
     .locals 29
-    new-instance v0, Ljava/lang/IllegalStateException;     <-- added
-    const-string v1, "In-app updates are disabled..."       <-- added
-    invoke-direct {v0, v1}, ...<init>(Ljava/lang/String;)V  <-- added
-    throw v0                                                <-- added
-    ...the original code is still here but can never run...
+    const/4 p2, 0x0      <-- added: the "install" flag is now always false
+    ...the original code runs as before...
 .end method
 ```
 
-Same as writing `throw new IllegalStateException("...")` as the first line of the method. The rest
-of the app already handles that exception (shows an error), so nothing else needed to change.
+Same as writing `install = false;` as the first line of the method. The check still runs and caches
+its result, but the download and installer step is never reached.
 
 ## 5. Why patches are version-specific, and safe to fail
 
@@ -121,4 +113,4 @@ signatures and strings instead of names.
 | Path | Role |
 |---|---|
 | `patches/src/main/kotlin/.../kim/KimCompatibility.kt` | which app and version the patches are for |
-| `patches/src/main/kotlin/.../kim/DisableOtaUpdatesPatch.kt` | simplest example: fingerprint + one edit |
+| `patches/src/main/kotlin/.../kim/NotifyOnlyOtaUpdatesPatch.kt` | simplest example: fingerprint + one edit |

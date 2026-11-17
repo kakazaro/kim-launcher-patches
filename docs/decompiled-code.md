@@ -31,7 +31,7 @@ version**, so patches must find them by fingerprint (strings, signature), never 
 | `A0/g.java` | **MethodChannel handlers**: `onMethodCall` switches on a channel id, then on the method name | finding the native side of any Dart call |
 | `byd/e.java` (76 MB) | **Vehicle bridge**: every BYD car read/control (`BYDAuto*Device`) | vehicle features; open with grep or JADX GUI |
 | `byd/*Daemon.java`, `byd/Sentry*.java`, `byd/IcCast*.java`, `byd/KimKeyAccessibilityService.java` | Background daemons, Sentry, instrument-cluster cast, steering-key mapping | |
-| `K1/uc.java` | In-app updates (check, download, install) | **Disable in-app updates** |
+| `K1/uc.java` | In-app updates (check, download, install) | **Notify-only in-app updates** |
 | `K1/sd.java` | Firebase cloud sync, auth, vehicle ID, subscription status | network / offline work |
 | `K1/jc.java` | Diagnostic log upload to Telegram | network / offline work |
 | `M1/h.java` | Weather, news, crypto/FX/gold lookups | network / offline work |
@@ -60,7 +60,7 @@ does and which MethodChannel method it calls:
 2. Find that channel in `java/com/kimkim/KimLauncherActivity.java`, then its handler in
    `java/A0/g.java`, and follow it into `K1/*` or `byd/*`.
 3. Read the target method in `smali/` and build a fingerprint from its stable strings and
-   signature (see `patches/src/.../DisableOtaUpdatesPatch.kt`).
+   signature (see `patches/src/.../NotifyOnlyOtaUpdatesPatch.kt`).
 4. JADX GUI is the easiest reader (Find Usage, full-text search):
    `C:/Workspace/tools/jadx/bin/jadx-gui refer-apk/kim-launcher-1.0.2781.apk`
 
