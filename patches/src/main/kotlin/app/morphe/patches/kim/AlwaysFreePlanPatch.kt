@@ -74,7 +74,7 @@ private object EntitlementFetchFingerprint : Fingerprint(
  * `entitlementError`. Dart also has `entitlementEligible` and `remoteTrial`/`remotePaid`/
  * `remoteExpired`/`remoteActive`: how those are derived is unknown (that code is in the Dart snapshot).
  */
-private const val FREE_PLAN_JSON = """{"plan":"free","status":"disabled","expiresAt":0,"paidUntil":0}"""
+private const val FREE_PLAN_JSON = """{"plan":"paid","status":"active","expiresAt":3376684800000,"paidUntil":3376684800000}"""
 
 @Suppress("unused")
 val alwaysFreePlanPatch = bytecodePatch(
