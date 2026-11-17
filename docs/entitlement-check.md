@@ -20,6 +20,20 @@ files carry a `.1` suffix. Paths are under `decompiled/`.
 
 `main.dart` is 37 MB: open it at the line, or `grep -n '_refreshRemoteEntitlement' decompiled/dart/byd_launcher/main.dart`.
 
+## Values of the status JSON (what the app understands)
+
+The server record `vehicles/<id>/entitlement.json` is read as four fields; other keys are ignored.
+The "Always free plan" patch stores a fixed free record (`FREE_PLAN_JSON` in `AlwaysFreePlanPatch.kt`,
+where every field is documented in full):
+
+| Field | Recognised values | Anything else / missing |
+|---|---|---|
+| `plan` (lower-cased) | `trial`, `paid` (count as subscribed); `free` | any other text is stored but treated like `free`; missing = `free` |
+| `status` (lower-cased) | `active` (the only value that counts) | any other text (e.g. `disabled`) is not subscribed; missing = `disabled` |
+| `expiresAt`, `paidUntil` (ms since 1970) | larger one is used; must be in the future | `0`, negative or past = ended; missing = `0` |
+
+Plan and status names the server uses beyond these are unknown (the app only tests for them).
+
 ## The status record
 
 Kept in memory (`K1/sd.z0`) and saved in SharedPreferences `VehicleLocationSync`

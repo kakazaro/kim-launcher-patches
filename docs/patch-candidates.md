@@ -56,9 +56,11 @@ Dart (`K1/M5`), and `K1/d9` swallows it.
 ## 4. Always free plan (implemented)
 
 `AlwaysFreePlanPatch.kt` inserts, at the start of `K1/sd.f0`, the same ending the original uses
-after a successful answer, fed with "no server record": parse (`json = null` gives
-`free / disabled / expiresAt 0`, `fetchedAt = now`), store it in the in-memory field, save it to
-preferences, notify Dart, return it. The request, token handling, writer-repair call and the
+after a successful answer, fed with a fixed JSON,
+`{"plan":"free","status":"disabled","expiresAt":0,"paidUntil":0}` (`FREE_PLAN_JSON` in the patch):
+parse it with the app's own parser (`free / disabled / expiresAt 0`, `fetchedAt = now`), store it
+in the in-memory field, save it to preferences, notify Dart, return it. The values are written
+out, so they don't depend on how the parser treats a missing record. The request, token handling, writer-repair call and the
 15-minute shortcut are never reached. Every name is read from `f0`'s own instructions, so renamed
 classes in later versions still match. Default **on**.
 

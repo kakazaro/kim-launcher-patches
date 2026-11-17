@@ -25,9 +25,54 @@ private object EntitlementFetchFingerprint : Fingerprint(
 )
 
 /**
- * The answer every check stores instead of asking the server. Same shape the server sends
- * (read by K1/sa.l: `plan`, `status`, `expiresAt`, `paidUntil`). Only the free plan: nothing in
- * here can unlock a Trial/PRO feature.
+ * The answer every check stores instead of asking the server. It has the same shape as the
+ * server's `vehicles/<id>/entitlement.json` record, and is read by the app's own parser
+ * (K1/sa.l in 1.0.2781). **Keep it a free plan**: this patch only exists to stop the server
+ * check, not to grant a plan.
+ *
+ * ## Fields (the parser reads these four; any other key is ignored)
+ *
+ * | Field | Type | Missing means | This patch |
+ * |---|---|---|---|
+ * | `plan` | string | `"free"` | `"free"` |
+ * | `status` | string | `"disabled"` | `"disabled"` |
+ * | `expiresAt` | number, milliseconds since 1970-01-01 UTC | `0` | `0` |
+ * | `paidUntil` | number, milliseconds since 1970-01-01 UTC | `0` | `0` |
+ *
+ * ### `plan` (text is lower-cased first, so `"Paid"` equals `"paid"`)
+ * - `"trial"`: the app treats the car as being on a trial. Also sets the Dart flag `entitlementTrial`.
+ * - `"paid"`: the app treats the car as a paid subscriber. Also sets `entitlementPaid`.
+ * - `"free"`: no subscription. This is the default when the field is missing.
+ * - Any other text (`"basic"`, `""`, ...): accepted and stored as-is, but treated exactly like
+ *   `"free"`. Only `trial` and `paid` ever count as subscribed.
+ * - The full list of plan names the server really uses is unknown: the app only tests for the two above.
+ *
+ * ### `status` (also lower-cased)
+ * - `"active"`: the only value that counts. Needed for any subscribed result.
+ * - `"disabled"`: default when missing. Not subscribed.
+ * - Any other text (`"expired"`, `"suspended"`, `"cancelled"`, ...): accepted and stored, but
+ *   treated like `"disabled"`: the app gives these no special meaning. The names the server
+ *   really uses are unknown.
+ *
+ * ### `expiresAt` and `paidUntil` (milliseconds since 1970, e.g. 1800000000000 = Jan 2027)
+ * - The app uses the larger of the two: `expiresAtMs = max(expiresAt, paidUntil)`.
+ * - Subscribed only while that time is still in the future. `0`, a negative number or a past
+ *   time counts as already ended ("Entitlement expired"). Dart receives `0` as `null` (no date).
+ * - Why two fields: the server can give a Trial end (`expiresAt`) and a paid end (`paidUntil`)
+ *   separately; the later one wins.
+ * - A number given as text (`"1800000000000"`) is also read as a number; unreadable text counts as `0`.
+ *
+ * ## What the app does with the result
+ * Subscribed = `plan` is `trial` or `paid`, AND `status` is `active`, AND `expiresAt`/`paidUntil`
+ * is in the future, AND the record was fetched less than 7 days ago. For this patch the first
+ * condition fails, so the result is always "not subscribed" (reason shown: "Plan is not active").
+ *
+ * The parser also adds two values that are not in the JSON: `fetchedAt` = the time of the call
+ * and `lastError` = none. Dart is then sent these keys: `entitlementPlan`, `entitlementStatus`,
+ * `entitlementExpiresAt`, `entitlementFetchedAt`, `entitlementActive`, `entitlementTrial`,
+ * `entitlementPaid`, `entitlementGrace` (active but last checked over 15 minutes ago) and
+ * `entitlementError`. Dart also has `entitlementEligible` and `remoteTrial`/`remotePaid`/
+ * `remoteExpired`/`remoteActive`: how those are derived is unknown (that code is in the Dart snapshot).
  */
 private const val FREE_PLAN_JSON = """{"plan":"free","status":"disabled","expiresAt":0,"paidUntil":0}"""
 
