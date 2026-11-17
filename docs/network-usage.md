@@ -74,3 +74,27 @@ These must keep working; they're why the `INTERNET` permission cannot simply be 
 - Wi-Fi dashcams (70mai and others) at `192.168.x.1` (`K1/U3`)
 - `https://kim-ic.invalid/`: an in-app WebView address, never resolved
 - Deep links handed to other apps (Google Maps, Waze) do no networking inside Kim
+
+## Which internet features need the paid plan
+
+From the code (1.0.2781). "Checked" means the code tests the same active-plan test described in
+[entitlement-check.md](entitlement-check.md) before doing the work.
+
+| Feature (needs internet) | Plan needed? | Evidence |
+|---|---|---|
+| Kim AI, "Hi Kim", proactive AI; its live answers (prices, news, weather) | **Yes, checked** | `AI_ENTITLEMENT_REQUIRED` in 8 AI channel handlers (`A0/g`, `L1/i`); "Kim AI requires an active Trial or Paid plan" |
+| Phone/PWA remote controls (`/remoteControl/request`) | **Yes, checked** | `K1/Da.u` |
+| Destination sent from the phone (`/navigation/request.json`) | **Yes, checked** | `K1/I0` |
+| Remote polling, remote GPS, trip / charge / refuel / Sentry preview uploads | **Yes, checked** | `K1/de.i` ("remote features locked"), `K1/n1`, `K1/z3`, `K1/D0`, `K1/a1`, `K1/sd.S`; "Trip and remote GPS features require Trial or Paid" |
+| Smart Key (Bluetooth; internet only to pair) | **Yes, checked** | `K1/Da.b`; "Smart Key requires active Kim Pro entitlement" |
+| In-app updates | **Yes, checked** | `K1/uc.g`: "Updates require active Trial or paid PRO" |
+| Kim Map online (Mapbox tiles, search, routing) | No plan check found | Mapbox classes have none. A server-side `launcherMapboxEligibility` call and a Dart quota guard exist; what they depend on is *unknown* |
+| Voice pack catalogue and downloads | No plan check found | `N1/I` callers have none |
+| Nearby places, speed limits, charger lookup (Overpass, OpenChargeMap) | No plan check found | Dart services mention no entitlement; `main.dart` could still gate the call, *unknown* |
+| Dashboard weather widgets | *Unknown* | Weather fetcher `M1/h.l` has no caller I could find; widgets may use another source |
+| Google Maps / Waze buttons | No | Opens the other app |
+
+Plan-gated features that do **not** need the internet (listed so they aren't confused with the above):
+Widget Studio editing, all Sentry settings, Smart Event Recording (and its sensitivity / camera mode),
+Trip history, Automation, Key Mapping, Background Runtime and IC cast. The Dart side blocks the Sentry,
+Smart Event and Trip history ones with a "paid feature" notice (13 call sites in `main.dart`).

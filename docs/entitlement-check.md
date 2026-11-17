@@ -38,8 +38,8 @@ Plan and status names the server uses beyond these are unknown (the app only tes
 
 Kept in memory (`K1/sd.z0`) and saved in SharedPreferences `VehicleLocationSync`
 as one JSON string under the key `entitlement` (fields `plan`, `status`, `expiresAt`, `fetchedAt`),
-written by `K1/sd.V` and loaded back by `K1/sd.M` (when it runs, I did not trace the call) (falls back to `free/disabled` if it
-cannot be read). It survives restarts; clearing app data loses it. Expiry tests use the device clock.
+written by `K1/sd.V` and loaded back at startup by `K1/sd.M` (called from `KimLauncherActivity` and `K1/sd.F0`; until then the
+status is `free/disabled`, and it stays that way if the saved copy cannot be read). It survives restarts; clearing app data loses it. Expiry tests use the device clock.
 
 | Field | Meaning |
 |---|---|
@@ -126,3 +126,28 @@ All of these must hold:
 
 This 7-day limit is the developer's design, and this project does not change it. If it doesn't fit
 how you use the car, ask the developer for a longer offline period.
+
+## During the 7 days offline: what keeps working
+
+The gate for every PRO feature I traced is the same "is it active?" test above (Dart receives it as
+`entitlementActive` and pushes it to Automation, Key Mapping, Proximity Key, Background Runtime and
+IC cast; native Kim AI and Smart Key call the test directly). While it is true, none of those checks
+look at the network. The "grace" value (saved status not verified in the last 15 minutes) is passed to
+Dart but I found nothing in the readable Dart that reads it as a restriction. The Dart "days left" value
+(`ceil((expiresAt - now) / 24h)`, capped at 9999) is display only.
+
+Still need the internet even with an active plan: online map tiles, search and routing, weather, news
+and price widgets, Kim AI web search, voice pack downloads, and everything that uses the cloud
+(PWA remote view, remote GPS and trips, Sentry previews, smart-key relay), plus updates.
+
+Not traced: whether any single feature adds a rule of its own on top of the shared test, and what the
+`... entitlement sync failed` paths (Key Mapping, Proximity Key, Automation, IC cast) do after an error.
+The 7-day and expiry tests use the head unit's clock, so a wrong clock can lock features early.
+
+### Offline cold start (traced)
+
+Features read the status from memory only. At startup the saved copy is loaded; then the forced
+refresh (app start) tries the server and, whether it succeeds, fails or is skipped for lack of a
+token, the native side always replies to Dart with the in-memory status (`K1/J8` id 9 -> `sd.I0()`).
+Dart keeps that copy and re-reads it every 60 seconds. So after the first successful fetch, no
+offline feature needs the network again until the 7-day / expiry limits above.
