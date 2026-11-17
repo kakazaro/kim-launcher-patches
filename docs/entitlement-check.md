@@ -4,6 +4,23 @@ Static analysis only; the app was not run. This documents what the shipped code 
 **Show subscription check result** patch can report it. The patch is read-only: it does not change
 the check, the saved status or any limit.
 
+## Where to read it
+
+JADX renames classes whose names collide on Windows, so `K1/sd` is `C0322sd.java`; the smali
+files carry a `.1` suffix. Paths are under `decompiled/`.
+
+| What | Java | Smali | Look for |
+|---|---|---|---|
+| Fetch + cache (`K1/sd.f0`) | `java/K1/C0322sd.java` (line ~3451) | `smali/K1/sd.1.smali` | `entitlement.json`, `f0(`, field `f5977z0` (= `z0`) |
+| Status record + "is active" (`K1/md`) | `java/K1/C0233md.java` (`d()` ~line 57) | `smali/K1/md.1.smali` | `604800000` (7 days) |
+| Vehicle/auth record (`K1/pd`) | `java/K1/C0278pd.java` | `smali/K1/pd*.smali` | `f5700a` (vehicle ID) |
+| Refresh task (`K1/t6.run`) | `java/K1/RunnableC0330t6.java` (`run()` ~line 55) | `smali/K1/t6.1.smali` | null-token branch |
+| Dart caller | `dart/byd_launcher/main.dart` line ~147383 | | `_refreshRemoteEntitlement`, `"refreshEntitlement"` |
+| This project's patch | `patches/src/main/kotlin/app/morphe/patches/kim/ShowSubscriptionCheckPatch.kt` | | |
+| Toast text logic | `extensions/kim/src/main/java/app/morphe/extension/kim/EntitlementToast.java` | | |
+
+`main.dart` is 37 MB: open it at the line, or `grep -n '_refreshRemoteEntitlement' decompiled/dart/byd_launcher/main.dart`.
+
 ## The status record
 
 Kept in memory (`K1/sd.z0`) and saved in SharedPreferences `VehicleLocationSync`

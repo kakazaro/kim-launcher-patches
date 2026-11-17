@@ -18,6 +18,7 @@ launcher for BYD DiLink head units. The structure follows
 - [Subscription check](docs/entitlement-check.md): how the app checks, caches and expires it
 - [Network usage](docs/network-usage.md): every internet endpoint, by feature
 - [Patch candidates](docs/patch-candidates.md): what can be patched and where
+- [Decompiled code](docs/decompiled-code.md): where the important app code is and how to regenerate it
 - [Build setup](docs/build-setup.md): GitHub Packages credentials for the Morphe plugin
 
 Patches never change, bypass or extend the app's subscription checks or limits. The one patch that

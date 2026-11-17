@@ -24,10 +24,11 @@ mv "$tmp/jadx/sources" "$out/java"
 python -I -c "import re,sys; d=open(sys.argv[1],'rb').read(); open(sys.argv[2],'w',encoding='utf-8').write('\n'.join(m.decode() for m in re.findall(rb'[\x20-\x7e]{6,}',d)))" \
   "$tmp/apktool/lib/arm64-v8a/libapp.so" "$out/dart-strings.txt"
 
-# Dart AOT: needs Visual Studio Build Tools and the dedup_instructions fix described in the doc.
+# Dart AOT: needs Visual Studio Build Tools and tools/blutter-release-snapshot.patch applied to blutter.
 if [ -f "$BLUTTER/blutter.py" ]; then
   mkdir -p "$tmp/lib" && cp "$tmp/apktool/lib/arm64-v8a/"lib{app,flutter}.so "$tmp/lib/"
   vcvars="C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat"
   cmd //c "call \"$vcvars\" >nul && python \"$(cygpath -w "$BLUTTER")\\blutter.py\" \"$(cygpath -w "$tmp/lib")\" \"$(cygpath -w "$out/dart")\""
 fi
+bash tools/trim-decompiled.sh "$out"
 echo "Done: $out/"
