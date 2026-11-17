@@ -35,7 +35,8 @@ bearinmindcat/morphe-patches.) So a release is complete only when **all three** 
    ```
    `created_at` is UTC **without** `Z` or offset; Morphe Manager rejects either.
    Get it with `date -u +%Y-%m-%dT%H:%M:%S`.
-5. **Build:** `./gradlew build` (needs `gpr.user`/`gpr.key`, see `docs/build-setup.md`).
+5. **Build:** `set -a; source .env; set +a; ./gradlew build --no-daemon` (loads `GITHUB_ACTOR`/`GITHUB_TOKEN`
+   from the git-ignored `.env`, see `.env.example` and `docs/build-setup.md`).
    Output: `patches/build/libs/patches-X.Y.Z.mpp`.
 6. **Verify the bundle** before publishing:
    ```bash
@@ -50,9 +51,14 @@ bearinmindcat/morphe-patches.) So a release is complete only when **all three** 
    git commit -m "chore(release): vX.Y.Z"
    git tag vX.Y.Z && git push && git push origin vX.Y.Z
    ```
-9. **Create the GitHub release** `vX.Y.Z` with the `.mpp` attached:
-   - with GitHub CLI: `gh release create vX.Y.Z patches/build/libs/patches-X.Y.Z.mpp --title vX.Y.Z --notes "<changes>"`
-   - without it: GitHub → Releases → Draft a new release → tag `vX.Y.Z` → attach the `.mpp`.
+9. **Create the GitHub release yourself** (do not hand this step to the user). Attach only
+   `patches-X.Y.Z.mpp`, not the `-sources`/`-javadoc` files; publish it, never as a draft:
+   ```bash
+   gh release create vX.Y.Z patches/build/libs/patches-X.Y.Z.mpp --title vX.Y.Z --notes "<changes>"
+   ```
+   If `gh` is missing or not logged in, tell the user to run `winget install GitHub.cli` and
+   `! gh auth login`, then retry. Only fall back to the web UI (Releases → Draft a new release →
+   tag `vX.Y.Z` → attach the `.mpp` → Publish) if they cannot install it.
 10. **Confirm it resolves** exactly like Morphe will:
     ```bash
     curl -sL https://raw.githubusercontent.com/<owner>/<repo>/main/patches-bundle.json
