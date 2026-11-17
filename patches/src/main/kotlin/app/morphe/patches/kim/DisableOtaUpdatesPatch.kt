@@ -18,7 +18,7 @@ private object OtaUpdateFingerprint : Fingerprint(
     returnType = "Ljava/util/LinkedHashMap;",
     parameters = listOf("I", "Ljava/lang/String;", "Z", "Z"),
     strings = listOf(
-        "/otaAndroidLatest?vehicleId=",
+        "https://asia-southeast1-byd-car-tracker.cloudfunctions.net/otaAndroidLatest?vehicleId=",
         "kim-launcher-update.apk",
         "Downloaded APK checksum does not match.",
     ),
