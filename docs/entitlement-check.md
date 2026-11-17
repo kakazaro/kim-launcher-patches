@@ -11,6 +11,7 @@ files carry a `.1` suffix. Paths are under `decompiled/`.
 | What | Java | Smali | Look for |
 |---|---|---|---|
 | **Readable rewrite of `f0` + helpers, with a name map** | `decompiled/annotated/EntitlementFetch.java` | | start here |
+| **`f0` after the Always-free patch** (before/after table) | `decompiled/annotated/EntitlementFetch_patched.java` | | |
 | Fetch + cache (`K1/sd.f0`) | `java/K1/C0322sd.java` (line ~3451) | `smali/K1/sd.1.smali` | `entitlement.json`, `f0(`, field `f5977z0` (= `z0`) |
 | Status record + "is active" (`K1/md`) | `java/K1/C0233md.java` (`d()` ~line 57) | `smali/K1/md.1.smali` | `604800000` (7 days) |
 | Vehicle/auth record (`K1/pd`) | `java/K1/C0278pd.java` | `smali/K1/pd*.smali` | `f5700a` (vehicle ID) |

@@ -8,6 +8,7 @@ Entitlement, PRO, Trial and licensing checks are out of scope
 |---|---|---|---|---|
 | 1 | **Allow non-BYD devices**: skip the "available only on BYD head units" screen (emulator or bench testing) | off | `r2.a.a(Context)Z` returns `true` | Hook located; ready to implement |
 | 2 | **Disable in-app updates**: the upstream OTA cannot install over a re-signed build | on | `K1/uc.c(I,String,Z,Z)LinkedHashMap` | **Implemented**: `DisableOtaUpdatesPatch.kt` |
+| 4 | **Always free plan**: `K1/sd.f0` skips the server and stores/returns `free/disabled` | on | `K1/sd.f0(pd,String,Z)md` | **Implemented**: `AlwaysFreePlanPatch.kt` (see below) |
 | 3 | **Telegram debug channel**: decide whether to disable it after reading what it sends | ? | `byd/telegram_debug` handler | Needs investigation |
 
 ## 1. Allow non-BYD devices
@@ -51,3 +52,23 @@ Dart (`K1/M5`), and `K1/d9` swallows it.
 ## 3. `byd/telegram_debug`
 
 - *Unknown:* what data is sent and when. Read the handler before deciding.
+
+## 4. Always free plan (implemented)
+
+`AlwaysFreePlanPatch.kt` inserts, at the start of `K1/sd.f0`, the same ending the original uses
+after a successful answer, fed with "no server record": parse (`json = null` gives
+`free / disabled / expiresAt 0`, `fetchedAt = now`), store it in the in-memory field, save it to
+preferences, notify Dart, return it. The request, token handling, writer-repair call and the
+15-minute shortcut are never reached. Every name is read from `f0`'s own instructions, so renamed
+classes in later versions still match. Default **on**.
+
+- Verified on 1.0.2781: the fingerprint (`/entitlement.json` + `VehicleLocationSync entitlement
+  plan=`) matches only `f0`; each derived reference resolves to exactly one target; the edited
+  class assembles to dex. Not built into a bundle (no GitHub Packages credentials here) and not
+  run on a device.
+- **Limit:** `f0` runs only when a sign-in token exists (the refresh task in `K1/t6` skips it
+  silently otherwise), and the app loads its saved status from preferences at start-up. So a
+  previously saved `paid/active` record stays in effect until `f0` runs once. Overwriting the
+  saved record at load time would be a second hook (the loader in `K1/sa`, around line 190).
+- **Effect:** Trial/PRO features lock (Sentry, Studio editing, vehicle controls, ...) even if the
+  car has a valid subscription. Turn the patch off to get them back; nothing server-side changes.
