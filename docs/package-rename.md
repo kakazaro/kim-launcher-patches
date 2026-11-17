@@ -1,6 +1,7 @@
 # Package rename: `com.kimkim` → `com.kakazaro.kimlauncher`
 
-Goal: install the patched build next to the original. Not implemented yet.
+**Decision (2026-11-17): not doing this.** The patched build keeps `com.kimkim` and replaces the
+original install. These notes are kept for reference only.
 
 ## What has to change
 

@@ -25,6 +25,24 @@ sockets are used in app code.
 | Crypto, FX and gold widgets / Kim AI answers | `api.coingecko.com`, `api.frankfurter.dev`, `api.gold-api.com` | `M1/h` | No prices |
 | Connectivity probe | `clients3.google.com/generate_204` | `K1/U3` | App considers itself offline |
 
+## Subscription status while offline
+
+Native check `K1/md.c(entitlement)` (1.0.2781) rejects the cached status when any of these hold:
+
+1. plan is not `trial` or `paid`, or status is not `active`
+2. `expiresAt` is in the past (the subscription period itself)
+3. `fetchedAt` is more than **7 days** old (`0x240c8400` ms): "Entitlement cache expired"
+
+So a paid plan keeps working offline for up to 7 days after the last successful sync. One
+successful sync (any network, e.g. a phone hotspot) resets the 7 days. The Dart side also has
+an "offline grace" (`entitlementGrace`, `remoteGrace`); its length is in `libapp.so` and wasn't
+read.
+
+An offline-mode patch must therefore **not** block the entitlement sync (Firebase auth
+`identitytoolkit`/`securetoken` and `vehicles/<id>/entitlement*.json`). Blocking it would stop the
+status from refreshing even when the car does get a signal, and the features would lock after
+7 days. This project does not change the check itself.
+
 ## Mapbox SDK (Kim Map, navigation)
 
 Mapbox makes its own native HTTP requests (tiles, search, directions, `events.mapbox.com`
