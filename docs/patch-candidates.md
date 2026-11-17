@@ -8,7 +8,6 @@ Entitlement, PRO, Trial and licensing checks are out of scope
 |---|---|---|---|---|
 | 1 | **Allow non-BYD devices**: skip the "available only on BYD head units" screen (emulator or bench testing) | off | `r2.a.a(Context)Z` returns `true` | Hook located; ready to implement |
 | 2 | **Disable in-app updates**: the upstream OTA cannot install over a re-signed build | on | `K1/uc.c(I,String,Z,Z)LinkedHashMap` | **Implemented**: `DisableOtaUpdatesPatch.kt` |
-| 4 | **Show subscription check result**: toast with the check result and offline time left | on | end of `K1/sd.f0`, null-token branch of `K1/t6.run` | **Implemented**: `ShowSubscriptionCheckPatch.kt` (see [entitlement-check.md](entitlement-check.md)) |
 | 3 | **Telegram debug channel**: decide whether to disable it after reading what it sends | ? | `byd/telegram_debug` handler | Needs investigation |
 
 ## 1. Allow non-BYD devices

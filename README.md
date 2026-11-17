@@ -8,7 +8,6 @@ launcher for BYD DiLink head units. The structure follows
 
 | Patch | Default | Description |
 |---|---|---|
-| Show subscription check result | on | Toast with the result of the app's own subscription check and how long the saved status works offline. Read-only. See [docs/entitlement-check.md](docs/entitlement-check.md) |
 | Disable in-app updates | on | Stops the app checking for, downloading and installing its own updates, which cannot install over a patched build |
 
 ## Docs
@@ -21,8 +20,7 @@ launcher for BYD DiLink head units. The structure follows
 - [Decompiled code](docs/decompiled-code.md): where the important app code is and how to regenerate it
 - [Build setup](docs/build-setup.md): GitHub Packages credentials for the Morphe plugin
 
-Patches never change, bypass or extend the app's subscription checks or limits. The one patch that
-touches that code only reports its result.
+Patches never change, bypass or extend the app's subscription checks or limits.
 
 ## Layout
 

@@ -77,30 +77,14 @@ OtaUpdateFingerprint.method.addInstructions(0, """
 Same as writing `throw new IllegalStateException("...")` as the first line of the method. The rest
 of the app already handles that exception (shows an error), so nothing else needed to change.
 
-## 5. A bigger example: the toast patch and "extensions"
-
-Smali is awkward for bigger logic (building a message, a `Toast`, date formatting). So:
-
-1. The logic is written as normal **Java** in `extensions/kim/.../EntitlementToast.java`. Morphe
-   compiles it and **copies it into the APK's dex** (`extendWith("extensions/kim.mpe")`).
-2. The patch inserts just **one line of smali** at each hook point that calls that Java:
-
-```smali
-sget-object v0, LK1/sd;->c:Landroid/content/Context;
-invoke-static {v0, v12}, Lapp/morphe/extension/kim/EntitlementToast;->onCheck(Landroid/content/Context;Ljava/lang/Object;)V
-return-object p1       <-- the original line, now running after our call
-```
-
-That is the usual pattern: **tiny smali hook + real code in an extension**.
-
-## 6. Why patches are version-specific, and safe to fail
+## 5. Why patches are version-specific, and safe to fail
 
 - Hook points are found by fingerprint, so a new app version often still works. If the code changed
   too much, the patch **stops with an error** instead of producing a broken APK.
 - Each patch declares which versions it was written for (`KimCompatibility.kt`: `1.0.2781`).
 - Always test after patching. We verified the smali assembles, but nothing replaces a real run.
 
-## 7. How I find where to hook (you can do this too)
+## 6. How I find where to hook (you can do this too)
 
 1. **Search for a visible string.** For updates: `kim-launcher-update.apk`. A string appears in
    exactly one class, which finds it.
@@ -112,13 +96,13 @@ That is the usual pattern: **tiny smali hook + real code in an extension**.
 
 Tools: apktool (APK to smali), JADX (APK to readable Java, easier to understand, sometimes wrong).
 
-## 8. What patches can't do here
+## 7. What patches can't do here
 
 The app's UI and many features are Dart, compiled into `libapp.so`. It is a native binary, not
 dex, so Morphe's tools can't edit it. Patches can only change what the Kotlin/Java side does, which is
 why some features (Kim search, nearby places) can't be turned off with a patch.
 
-## 8b. Gotcha: reading the right file on Windows
+## 7b. Gotcha: reading the right file on Windows
 
 Obfuscated names differ only by case (`K1/Uc` and `K1/uc`), and Windows treats them as one file.
 Tools rename one of them, so the class you want may sit under another name:
@@ -132,12 +116,9 @@ Tools rename one of them, so the class you want may sit under another name:
 Java and smali names differ too (`C0351uc` vs `K1/uc`), which is one more reason fingerprints use
 signatures and strings instead of names.
 
-## 9. Where things live in this repo
+## 8. Where things live in this repo
 
 | Path | Role |
 |---|---|
 | `patches/src/main/kotlin/.../kim/KimCompatibility.kt` | which app and version the patches are for |
 | `patches/src/main/kotlin/.../kim/DisableOtaUpdatesPatch.kt` | simplest example: fingerprint + one edit |
-| `patches/src/main/kotlin/.../kim/ShowSubscriptionCheckPatch.kt` | fingerprints + hooks that call the extension |
-| `extensions/kim/` | normal Java that gets copied into the app |
-| `tools/check/` | off-device test of the toast text logic |
