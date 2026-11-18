@@ -10,6 +10,7 @@ launcher for BYD DiLink head units. The structure follows
 |---|---|---|
 | Notify-only in-app updates | on | Lets the app check for and show a newer upstream version but never downloads or installs it (it cannot install over a patched build). The check needs an active Trial or paid plan |
 | Always free plan (skip subscription check) | on | Every subscription check returns the free plan without contacting the server. Trial/PRO features stay locked. |
+| External navigation app | off | The Navigation tab shows an installed map app (Google Maps, Waze, ...) instead of Kim Map. See [External navigation app](docs/external-navigation.md). |
 
 ## Docs
 
@@ -18,6 +19,7 @@ launcher for BYD DiLink head units. The structure follows
 - [Subscription check](docs/entitlement-check.md): how the app checks, caches and expires it
 - [Network usage](docs/network-usage.md): every internet endpoint, by feature
 - [Patch candidates](docs/patch-candidates.md): what can be patched and where
+- [External navigation app](docs/external-navigation.md): how to use it, how it works, limits
 - [Decompiled code](docs/decompiled-code.md): where the important app code is and how to regenerate it
 - [Build setup](docs/build-setup.md): GitHub Packages credentials for the Morphe plugin
 
