@@ -12,7 +12,7 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.util.ReferenceUtil
 
 /**
- * The subscription fetch (K1/sd.f0 in 1.0.2781, see docs/entitlement-check.md):
+ * The subscription fetch (K1/sd.f0 in 1.0.2781, K1/te.f0 in 1.0.2785, see docs/entitlement-check.md):
  * `f0(VehicleIdentity, String token, boolean force): EntitlementRecord`. It GETs
  * `.../vehicles/<id>/entitlement.json`, stores the parsed record in a static field, saves it and
  * tells Dart. Both strings below sit only in this method.
@@ -27,7 +27,7 @@ private object EntitlementFetchFingerprint : Fingerprint(
 /**
  * The answer every check stores instead of asking the server. It has the same shape as the
  * server's `vehicles/<id>/entitlement.json` record, and is read by the app's own parser
- * (K1/sa.l in 1.0.2781). **Keep it a free plan**: this patch only exists to stop the server
+ * (K1/sa.l in 1.0.2781, K1/k9.p in 1.0.2785). **Keep it a free plan**: this patch only exists to stop the server
  * check, not to grant a plan.
  *
  * ## Fields (the parser reads these four; any other key is ignored)
@@ -74,7 +74,7 @@ private object EntitlementFetchFingerprint : Fingerprint(
  * `entitlementError`. Dart also has `entitlementEligible` and `remoteTrial`/`remotePaid`/
  * `remoteExpired`/`remoteActive`: how those are derived is unknown (that code is in the Dart snapshot).
  */
-private const val FREE_PLAN_JSON = """{"plan":"paid","status":"active","expiresAt":3376684800000,"paidUntil":3376684800000}"""
+// FREE_PLAN_JSON is generated at build time from KIM_PLAN_JSON (env or .env), see patches/build.gradle.kts.
 
 @Suppress("unused")
 val alwaysFreePlanPatch = bytecodePatch(
@@ -138,14 +138,16 @@ val alwaysFreePlanPatch = bytecodePatch(
 
         // Same ending as the original success path (store, save, notify, return), minus the
         // request: v0/v1 = now, v2 = vehicle id, v3 = the fixed free-plan JSON object (v4 holds
-        // its text). f0 has 11 locals, so v0..v4 are free.
+        // its text). f0 has 11+ locals, so v0..v4 are free. p0 is copied with move-object/from16
+        // first: from 1.0.2785 f0 has 17 locals, so p0 is v17 and iget-object can't address it.
         val freePlanJson = FREE_PLAN_JSON.replace("\"", "\\\"")
         fetch.addInstructions(
             0,
             """
                 invoke-static {}, Ljava/lang/System;->currentTimeMillis()J
                 move-result-wide v0
-                iget-object v2, p0, $vehicleId
+                move-object/from16 v2, p0
+                iget-object v2, v2, $vehicleId
                 new-instance v3, Lorg/json/JSONObject;
                 const-string v4, "$freePlanJson"
                 invoke-direct {v3, v4}, Lorg/json/JSONObject;-><init>(Ljava/lang/String;)V

@@ -6,7 +6,7 @@ import app.morphe.patcher.patch.bytecodePatch
 import com.android.tools.smali.dexlib2.AccessFlags
 
 /**
- * The native update routine behind the `byd/update` channel (K1/uc.c in 1.0.2781):
+ * The native update routine behind the `byd/update` channel (K1/uc.c in 1.0.2781, K1/xd.c in 1.0.2785):
  * `c(int flags, String source, boolean install, boolean force)` checks otaAndroidLatest,
  * caches the result for the update UI, and, when `install` is true and an update exists,
  * downloads kim-launcher-update.apk, verifies it and opens the installer.

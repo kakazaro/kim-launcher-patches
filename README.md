@@ -47,6 +47,7 @@ The bundle is written to `patches/build/libs/patches-<version>.mpp`.
 
 | App version | Status |
 |---|---|
+| 1.0.2785 | fingerprints match, patched APK builds; not yet run on a device |
 | 1.0.2781 (2393) | fingerprints match; not yet run on a device |
 
 ## License

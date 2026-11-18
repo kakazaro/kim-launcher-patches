@@ -16,6 +16,7 @@ internal val compatibility = Compatibility(
     appIconColor = 0x1C2218,
     signatures = setOf(KIM_CERT_SHA256),
     targets = listOf(
+        AppTarget(version = "1.0.2785", isExperimental = false, minSdk = 24),
         AppTarget(version = "1.0.2781", isExperimental = false, minSdk = 24),
     ),
 )
