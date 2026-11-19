@@ -6,13 +6,13 @@ import app.morphe.patcher.patch.bytecodePatch
 import com.android.tools.smali.dexlib2.AccessFlags
 
 /**
- * The native update routine behind the `byd/update` channel (K1/uc.c in 1.0.2781, K1/xd.c in 1.0.2785):
+ * The native update routine behind the `byd/update` channel (byd/md.c in 1.0.2787):
  * `c(int flags, String source, boolean install, boolean force)` checks otaAndroidLatest,
  * caches the result for the update UI, and, when `install` is true and an update exists,
  * downloads kim-launcher-update.apk, verifies it and opens the installer.
  *
  * Forcing `install` (p2) to false keeps the check and the cached "update available" status but
- * never downloads or installs. K1/uc.g() still requires an active Trial or paid PRO plan, so with
+ * never downloads or installs. the update gate still requires an active Trial or paid PRO plan, so with
  * "Always free plan" the check simply fails and nothing is shown or downloaded.
  */
 private object OtaUpdateFingerprint : Fingerprint(
