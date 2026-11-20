@@ -19,7 +19,7 @@ decompiled/
 
 ## The files that matter
 
-Native (`java/`, same paths in `smali/`). Obfuscated names (`K1/uc`) **change in every app
+Native (`java/`, same paths in `smali/`). Obfuscated names (`byd/vd`) **change in every app
 version**, so patches must find them by fingerprint (strings, signature), never by name.
 
 | File | What it is | Used by patch |
@@ -31,7 +31,7 @@ version**, so patches must find them by fingerprint (strings, signature), never 
 | `A0/g.java` | **MethodChannel handlers**: `onMethodCall` switches on a channel id, then on the method name | finding the native side of any Dart call |
 | `byd/e.java` (76 MB) | **Vehicle bridge**: every BYD car read/control (`BYDAuto*Device`) | vehicle features; open with grep or JADX GUI |
 | `byd/*Daemon.java`, `byd/Sentry*.java`, `byd/IcCast*.java`, `byd/KimKeyAccessibilityService.java` | Background daemons, Sentry, instrument-cluster cast, steering-key mapping | |
-| `K1/uc.java` | In-app updates (check, download, install) | **Notify-only in-app updates** |
+| `byd/vd.java` | In-app updates (check, download, install) | **Settings-only in-app updates** |
 | `K1/sd.java` | Firebase cloud sync, auth, vehicle ID, subscription status | network / offline work |
 | `K1/jc.java` | Diagnostic log upload to Telegram | network / offline work |
 | `M1/h.java` | Weather, news, crypto/FX/gold lookups | network / offline work |

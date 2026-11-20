@@ -94,7 +94,7 @@ is what refreshes the 7-day clock.
 Other server calls that are not plan checks but are in the same file: `launcherMapboxEligibility`
 (sent when the app builds its vehicle-status map; what Dart does with a failure is *unknown*),
 `launcherMonthlyActivity`, `launcherClaimWriterRepair`, and the update check (`otaAndroidLatest`,
-download/install blocked by the **Notify-only in-app updates** patch). The Kim AI web endpoint (`botbtc.online/kim-search`)
+download/install blocked by the **Settings-only in-app updates** patch). The Kim AI web endpoint (`botbtc.online/kim-search`)
 is called from Dart; whether that server enforces the plan on its own side is *unknown*.
 
 ## Is it active? (`K1/md.d`)

@@ -8,7 +8,7 @@ launcher for BYD DiLink head units. The structure follows
 
 | Patch | Default | Description |
 |---|---|---|
-| Notify-only in-app updates | on | Lets the app check for and show a newer upstream version but never downloads or installs it (it cannot install over a patched build). The check needs an active Trial or paid plan |
+| Settings-only in-app updates | on | A newer upstream version shows only in the settings screen (manual check): no automatic check or popup on the main screen, and updates are never downloaded or installed (an upstream update cannot install over a patched build) |
 | Always free plan (skip subscription check) | on | Every subscription check returns the free plan without contacting the server. Trial/PRO features stay locked. |
 
 ## Docs
@@ -45,9 +45,12 @@ The bundle is written to `patches/build/libs/patches-<version>.mpp`.
 
 ## Tested
 
+Upstream warns: *Kim Launcher is upgrading to API v2; update to 1.0.2789+401 or later, older versions will no longer be supported.* Only 1.0.2789 is supported here.
+
+
 | App version | Status |
 |---|---|
-| 1.0.2787 | both patches apply with Morphe CLI, patched APK builds; not yet run on a device |
+| 1.0.2789 | both patches apply with Morphe CLI, patched APK builds; not yet run on a device |
 
 ## License
 

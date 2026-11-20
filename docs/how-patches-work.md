@@ -18,7 +18,7 @@ An APK is a zip file. The part that matters for patches is `classes.dex`: the ap
 Kotlin/Java code. You can't read a dex, but it converts losslessly to **smali**, a text form of the
 same instructions. Everything in `.work/smali/` is the app's code as smali.
 
-Example, the start of the real update method (`K1/uc.c`), in smali:
+Example, the start of the real update method (`byd/vd.c`), in smali:
 
 ```smali
 .method public static c(ILjava/lang/String;ZZ)Ljava/util/LinkedHashMap;
@@ -33,7 +33,7 @@ temporary variables), like `const-string v1, "hello"` or `invoke-static {v0}, Fo
 
 ## 3. Step A: find the method (Fingerprint)
 
-The app is **obfuscated**: the update method is called `K1/uc.c`, and in the next app version it
+The app is **obfuscated**: the update method is called `byd/vd.c`, and in the next app version it
 could be `Z2/qa.f`. So a patch can't say "edit K1/uc.c". Instead it describes the method by things
 that don't change between versions, called a **fingerprint**:
 

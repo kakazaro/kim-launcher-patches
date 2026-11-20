@@ -7,7 +7,7 @@ Entitlement, PRO, Trial and licensing checks are out of scope
 | # | Patch | Default | Target (dex) | Status |
 |---|---|---|---|---|
 | 1 | **Allow non-BYD devices**: skip the "available only on BYD head units" screen (emulator or bench testing) | off | `r2.a.a(Context)Z` returns `true` | Hook located; ready to implement |
-| 2 | **Notify-only in-app updates**: the upstream OTA cannot install over a re-signed build | on | `K1/uc.c(I,String,Z,Z)LinkedHashMap` | **Implemented**: `NotifyOnlyOtaUpdatesPatch.kt` |
+| 2 | **Settings-only in-app updates**: the upstream OTA cannot install over a re-signed build | on | `K1/uc.c(I,String,Z,Z)LinkedHashMap` | **Implemented**: `SettingsOnlyOtaUpdatesPatch.kt` |
 | 4 | **Always free plan**: `K1/sd.f0` skips the server and stores/returns `free/disabled` | on | `K1/sd.f0(pd,String,Z)md` | **Implemented**: `AlwaysFreePlanPatch.kt` (see below) |
 | 3 | **Telegram debug channel**: decide whether to disable it after reading what it sends | ? | `byd/telegram_debug` handler | Needs investigation |
 
